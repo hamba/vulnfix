@@ -1,0 +1,40 @@
+# Vulnerability Report
+
+## `example.com/bar` → `v2.0.1`
+
+### GO-2024-0005 (CVE-2024-77777)
+
+SQL injection in example.com/bar
+
+**References**
+
+- <https://pkg.go.dev/vuln/GO-2024-0005>
+
+## `example.com/foo` → `v1.3.0`
+
+### GO-2024-0001 (CVE-2024-12345)
+
+Remote code execution via crafted input in example.com/foo
+
+**References**
+
+- <https://pkg.go.dev/vuln/GO-2024-0001>
+
+### GO-2024-0004 (CVE-2024-12346)
+
+Denial of service in example.com/foo
+
+**References**
+
+- <https://pkg.go.dev/vuln/GO-2024-0004>
+
+## `stdlib` → `go1.22.3`
+
+### GO-2024-0002 (CVE-2024-99999)
+
+HTTP/2 server memory exhaustion in stdlib
+
+**References**
+
+- <https://pkg.go.dev/vuln/GO-2024-0002>
+
