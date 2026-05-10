@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
 
 	"golang.org/x/mod/semver"
 )
@@ -16,31 +17,17 @@ import (
 // golang.org/x/vuln/internal/osv, which are not importable externally.
 
 type message struct {
-	OSV *osvEntry `json:"osv,omitempty"`
+	Finding *finding `json:"finding"`
 }
 
-type osvEntry struct {
-	Affected []affected `json:"affected"`
+type finding struct {
+	OSV          string  `json:"osv"`
+	FixedVersion string  `json:"fixed_version"`
+	Trace        []frame `json:"trace"`
 }
 
-type affected struct {
-	Package osvModule `json:"package"`
-	Ranges  []rng     `json:"ranges"`
-}
-
-// osvModule is the package identifier in an OSV entry.
-// The JSON field name is "name", not "path".
-type osvModule struct {
-	Path string `json:"name"`
-}
-
-type rng struct {
-	Events []rangeEvent `json:"events"`
-}
-
-type rangeEvent struct {
-	Introduced string `json:"introduced,omitempty"`
-	Fixed      string `json:"fixed,omitempty"`
+type frame struct {
+	Module string `json:"module"`
 }
 
 const (
@@ -53,12 +40,11 @@ const (
 	GoToolchainPath = "toolchain"
 )
 
-// ParseFixed reads govulncheck -json output from r and returns a map of
-// module path to the minimum version that fixes all known vulnerabilities
-// for that module. When a module appears in multiple OSV entries the
-// highest fix version wins. Versions have no leading "v".
-//
-//nolint:gocognit // Splitting this will not make it simpler.
+// ParseFixed reads govulncheck -json output from r and returns a map of module
+// path to the minimum version that fixes all reachable vulnerabilities. Only
+// finding messages are considered, so modules that are imported but whose
+// vulnerable symbols are never called are not included. When a module has
+// multiple findings the highest fix version is used. Versions have no leading "v".
 func ParseFixed(r io.Reader) (map[string]string, error) {
 	dec := json.NewDecoder(r)
 
@@ -71,29 +57,17 @@ func ParseFixed(r io.Reader) (map[string]string, error) {
 			}
 			return nil, fmt.Errorf("parsing govulncheck JSON: %w", err)
 		}
-		if msg.OSV == nil {
+
+		if msg.Finding == nil || len(msg.Finding.Trace) == 0 {
 			continue
 		}
 
-		for _, aff := range msg.OSV.Affected {
-			mod := aff.Package.Path
-			if mod == "" {
-				continue
-			}
-
-			for _, r := range aff.Ranges {
-				for _, ev := range r.Events {
-					if ev.Fixed == "" {
-						continue
-					}
-
-					// semver.Compare expects a leading "v".
-					candidate := "v" + ev.Fixed
-					if existing, ok := fixed[mod]; !ok || semver.Compare(candidate, "v"+existing) > 0 {
-						fixed[mod] = ev.Fixed
-					}
-				}
-			}
+		mod := msg.Finding.Trace[0].Module
+		fixedVer := msg.Finding.FixedVersion
+		fixedVer = strings.TrimPrefix(fixedVer, "v")
+		fixedVer = strings.TrimPrefix(fixedVer, "go")
+		if existing, ok := fixed[mod]; !ok || semver.Compare("v"+fixedVer, "v"+existing) > 0 {
+			fixed[mod] = fixedVer
 		}
 	}
 	return fixed, nil
