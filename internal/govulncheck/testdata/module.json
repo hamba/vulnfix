@@ -1,4 +1,4 @@
 {"config":{"protocol_version":"v1.0.0","scanner_name":"govulncheck","scanner_version":"v1.3.0","db":"https://vuln.go.dev","scan_level":"symbol","scan_mode":"source"}}
-{"osv":{"id":"GO-2024-0001","affected":[{"package":{"name":"example.com/foo","ecosystem":"Go"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.2.3"}]}]}]}}
+{"osv":{"id":"GO-2024-0001","aliases":["CVE-2024-12345","GHSA-aaaa-bbbb-cccc"],"summary":"Remote code execution via crafted input in example.com/foo","references":[{"type":"ADVISORY","url":"https://pkg.go.dev/vuln/GO-2024-0001"},{"type":"WEB","url":"https://www.cve.org/CVERecord?id=CVE-2024-12345"}],"affected":[{"package":{"name":"example.com/foo","ecosystem":"Go"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.2.3"}]}]}]}}
 {"finding":{"osv":"GO-2024-0001","fixed_version":"v1.2.3","trace":[{"module":"example.com/foo","version":"v1.0.0"}]}}
 

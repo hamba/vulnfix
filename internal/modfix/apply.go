@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-
-	"github.com/hamba/vulnfix/internal/govulncheck"
+	"strings"
 )
 
 // Apply upgrades each module in fixes to its fixed version by running
 // "go get", then cleans up the module graph with "go mod tidy".
+// fixes is a map of module path to the minimum fixed version.
 // All commands run inside dir. ctx controls cancellation.
 func Apply(ctx context.Context, dir string, fixes map[string]string) error {
 	for mod, ver := range fixes {
@@ -28,18 +28,17 @@ func Apply(ctx context.Context, dir string, fixes map[string]string) error {
 	return nil
 }
 
-// moduleArg returns the argument to pass to "go get" for the given module
-// and version. stdlib and toolchain use special go-directive syntax.
 func moduleArg(mod, ver string) string {
 	switch mod {
-	case govulncheck.GoStdModulePath:
-		// "go get go@1.22.3" updates the go directive in go.mod.
-		return "go@" + ver
-	case govulncheck.GoToolchainPath:
-		// "go get toolchain@go1.22.3" updates the toolchain directive in go.mod.
-		return "toolchain@go" + ver
+	case "stdlib":
+		// ver is "go1.22.3"; "go get go@1.22.3" updates the go directive in go.mod.
+		return "go@" + strings.TrimPrefix(ver, "go")
+	case "toolchain":
+		// ver is "go1.23.0"; "go get toolchain@go1.23.0" updates the toolchain directive.
+		return "toolchain@" + ver
 	default:
-		return mod + "@v" + ver
+		// ver is "v1.2.3".
+		return mod + "@" + ver
 	}
 }
 
