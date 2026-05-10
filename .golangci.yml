@@ -1,0 +1,83 @@
+version: "2"
+
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+  settings:
+    gofumpt:
+      extra-rules: true
+    gci:
+      sections:
+        - standard
+        - default
+        - blank
+        - dot
+  exclusions:
+    generated: lax
+
+linters:
+  default: all
+  disable:
+    - depguard
+    - err113
+    - exhaustive
+    - exhaustruct
+    - forbidigo
+    - forcetypeassert
+    - funcorder
+    - funlen
+    - gochecknoglobals
+    - inamedparam
+    - ireturn
+    - mnd
+    - musttag
+    - nlreturn
+    - noinlineerr
+    - nonamedreturns
+    - paralleltest
+    - tagliatelle
+    - testableexamples
+    - thelper
+    - tparallel
+    - varnamelen
+    - wrapcheck
+    - wsl
+    - wsl_v5
+  settings:
+    cyclop:
+      max-complexity: 12
+    funlen:
+      lines: 80
+    gosec:
+      excludes:
+        - G103
+        - G115
+        - G204
+    revive:
+      rules:
+        - name: var-naming
+          arguments:
+            - []
+            - []
+            - - skip-package-name-checks: true
+                skip-package-name-collision-with-go-std: true
+    testifylint:
+      disable:
+        - float-compare
+  exclusions:
+    generated: lax
+    rules:
+      - linters:
+          - dupl
+        path: api/server.go
+      - linters:
+          - lll
+        path: mod/(.+).go
+      - linters:
+          - dupl
+          - gosec
+          - lll
+        path: _test\.go
