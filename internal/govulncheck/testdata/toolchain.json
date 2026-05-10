@@ -1,4 +1,4 @@
 {"config":{"protocol_version":"v1.0.0","scanner_name":"govulncheck","scanner_version":"v1.3.0","db":"https://vuln.go.dev","scan_level":"symbol","scan_mode":"source"}}
-{"osv":{"id":"GO-2024-0003","affected":[{"package":{"name":"toolchain","ecosystem":"Go"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.23.0"}]}]}]}}
+{"osv":{"id":"GO-2024-0003","aliases":["CVE-2024-88888"],"summary":"Toolchain build cache poisoning","references":[{"type":"ADVISORY","url":"https://pkg.go.dev/vuln/GO-2024-0003"}],"affected":[{"package":{"name":"toolchain","ecosystem":"Go"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.23.0"}]}]}]}}
 {"finding":{"osv":"GO-2024-0003","fixed_version":"go1.23.0","trace":[{"module":"toolchain","version":"go1.22.0"}]}}
 
