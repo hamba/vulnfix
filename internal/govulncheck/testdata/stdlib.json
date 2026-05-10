@@ -1,0 +1,4 @@
+{"config":{"protocol_version":"v1.0.0","scanner_name":"govulncheck","scanner_version":"v1.3.0","db":"https://vuln.go.dev","scan_level":"symbol","scan_mode":"source"}}
+{"osv":{"id":"GO-2024-0002","affected":[{"package":{"name":"stdlib","ecosystem":"Go"},"ranges":[{"type":"SEMVER","events":[{"introduced":"0"},{"fixed":"1.22.3"}]}]}]}}
+{"finding":{"osv":"GO-2024-0002","fixed_version":"go1.22.3","trace":[{"module":"stdlib","version":"go1.21.0"}]}}
+
