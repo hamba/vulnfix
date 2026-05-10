@@ -1,0 +1,12 @@
+# Vulnerability Report
+
+## `example.com/foo` → `v1.2.3`
+
+### GO-2024-0001
+
+Remote code execution via crafted input in example.com/foo
+
+**References**
+
+- <https://pkg.go.dev/vuln/GO-2024-0001>
+
