@@ -37,4 +37,25 @@ You can also apply fixes from a saved report:
 
 ```bash
 vulnfix < govulncheck-report.json
+```
 
+Optionally write a Markdown CVE report:
+
+```bash
+govulncheck -json ./... | vulnfix -o report.md
+```
+
+## How It Works
+
+`vulnfix` parses the `govulncheck -json` output and collects the minimum fixed
+version for each vulnerable module. It then runs `go get <module>@<version>` for
+each affected dependency and follows up with `go mod tidy` to keep the module
+graph clean.
+
+Special pseudo-modules are handled automatically:
+
+| Module          | Action                                                             |
+|-----------------|--------------------------------------------------------------------|
+| `stdlib`        | Updates the `go` directive via `go get go@<version>`               |
+| `toolchain`     | Updates the `toolchain` directive via `go get toolchain@<version>` |
+| everything else | Regular `go get <module>@<version>`                                |
