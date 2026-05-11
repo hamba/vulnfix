@@ -31,7 +31,7 @@ jobs:
       - name: Cache Go test cache
         uses: actions/cache@v4
         with:
-          path: /tmp/go-test-cache
+          path: /home/runner/.cache/go-test-cache
           key: ${{ runner.os }}-gocache-${{ hashFiles('**/go.sum') }}
           restore-keys: ${{ runner.os }}-gocache-
 
@@ -46,7 +46,7 @@ jobs:
 
       - name: Run Tests
         env:
-          GOCACHE: /tmp/go-test-cache
+          GOCACHE: /home/runner/.cache/go-test-cache
         run: gotestsum --junitfile tests.xml --format pkgname -- -cover -race ./...
 
       - name: Test Summary
