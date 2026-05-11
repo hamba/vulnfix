@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/hamba/vulnfix/internal/govulncheck"
+	"github.com/hamba/vulnfix/govulncheck"
 )
 
 // Write renders a sorted Markdown vulnerability report to w.
