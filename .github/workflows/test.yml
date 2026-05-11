@@ -32,8 +32,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /home/runner/.cache/go-test-cache
-          key: ${{ runner.os }}-gocache-${{ hashFiles('**/go.sum') }}
-          restore-keys: ${{ runner.os }}-gocache-
+          key: ${{ runner.os }}-go-testcache-${{ hashFiles('**/go.sum') }}
+          restore-keys: ${{ runner.os }}-go-testcache-
 
       - name: Download dependencies
         run: go mod download
@@ -45,9 +45,9 @@ jobs:
           gotestsum_version: v1.13.0
 
       - name: Run Tests
+        run: gotestsum --junitfile tests.xml --format pkgname -- -cover -race ./...
         env:
           GOCACHE: /home/runner/.cache/go-test-cache
-        run: gotestsum --junitfile tests.xml --format pkgname -- -cover -race ./...
 
       - name: Test Summary
         uses: test-summary/action@v2
