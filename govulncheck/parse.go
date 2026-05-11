@@ -13,12 +13,10 @@ import (
 )
 
 const (
-	// GoStdModulePath is the pseudo-module path used by govulncheck for
-	// standard library vulnerabilities.
+	// GoStdModulePath is the module path for standard library vulnerabilities.
 	GoStdModulePath = "stdlib"
 
-	// GoToolchainPath is the pseudo-module path used by govulncheck for
-	// toolchain vulnerabilities.
+	// GoToolchainPath is the module path for toolchain vulnerabilities.
 	GoToolchainPath = "toolchain"
 )
 
@@ -30,7 +28,7 @@ type OSV struct {
 	// Aliases contains alternate identifiers such as CVE or GHSA IDs.
 	Aliases []string
 
-	// Summary is a short human-readable description of the vulnerability.
+	// Summary describes the vulnerability.
 	Summary string
 
 	// References are URLs with more information (advisories, fixes, etc.).
@@ -39,9 +37,7 @@ type OSV struct {
 
 // Fix describes the upgrade needed for one module and the vulnerabilities it resolves.
 type Fix struct {
-	// Version is the minimum version that fixes all reachable vulnerabilities
-	// for this module, including its natural prefix: "v1.2.3" for regular
-	// modules, "go1.22.3" for stdlib, "go1.23.0" for toolchain.
+	// Version is the minimum version that resolves all findings for this module.
 	Version string
 
 	// OSVs are the vulnerabilities that had actual findings against this module.
@@ -50,7 +46,9 @@ type Fix struct {
 
 // Parse reads govulncheck -json output from r and returns a map of module path
 // to Fix. Only finding messages are considered; modules whose vulnerable
-// symbols are never called are not included.
+// symbols are never called are not included. The Fix.Version field uses the
+// module's native version prefix: "v1.2.3" for regular modules, "go1.x.y"
+// for stdlib and toolchain.
 func Parse(r io.Reader) (map[string]Fix, error) {
 	dec := json.NewDecoder(r)
 
@@ -75,7 +73,7 @@ func Parse(r io.Reader) (map[string]Fix, error) {
 		}
 
 		mod := msg.Finding.Trace[0].Module
-		ver := msg.Finding.FixedVersion // keep natural prefix ("v..." or "go...")
+		ver := msg.Finding.FixedVersion
 
 		f := fixes[mod]
 		if f.Version == "" || semver.Compare("v"+normalizeVersion(ver), "v"+normalizeVersion(f.Version)) > 0 {
@@ -116,9 +114,8 @@ func normalizeVersion(v string) string {
 	return v
 }
 
-// These types implement the govulncheck -json message protocol.
-// The JSON tags mirror golang.org/x/vuln/internal/govulncheck and
-// golang.org/x/vuln/internal/osv, which are not importable externally.
+// These types mirror the internal message protocol of golang.org/x/vuln,
+// which is not importable externally.
 
 type message struct {
 	Finding *finding  `json:"finding"`
