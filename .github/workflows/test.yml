@@ -45,15 +45,16 @@ jobs:
           gotestsum_version: v1.13.0
 
       - name: Run Tests
-        run: gotestsum --junitfile tests.xml --format pkgname -- -cover -race ./...
+        run: gotestsum --junitfile tests.xml --format pkgname -- -covermode=atomic -coverprofile=coverage.out -race ./...
         env:
           GOCACHE: /home/runner/.cache/go-test-cache
 
-      - name: Test Summary
-        uses: test-summary/action@v2
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
         with:
-          paths: "tests.xml"
-        if: always()
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          files: coverage.out
+          format: golang
 
   lint:
     runs-on: ubuntu-latest
