@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hamba/vulnfix/internal/govulncheck"
-	"github.com/hamba/vulnfix/internal/report"
+	"github.com/hamba/vulnfix/govulncheck"
+	"github.com/hamba/vulnfix/report"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

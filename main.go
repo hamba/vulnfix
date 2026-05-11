@@ -9,9 +9,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/hamba/vulnfix/internal/govulncheck"
-	"github.com/hamba/vulnfix/internal/modfix"
-	"github.com/hamba/vulnfix/internal/report"
+	"github.com/hamba/vulnfix/govulncheck"
+	"github.com/hamba/vulnfix/modfix"
+	"github.com/hamba/vulnfix/report"
 )
 
 func main() {

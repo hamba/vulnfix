@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/hamba/vulnfix/internal/modfix"
+	"github.com/hamba/vulnfix/modfix"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
