@@ -10,9 +10,8 @@ import (
 	"github.com/hamba/vulnfix/govulncheck"
 )
 
-// Write renders a sorted Markdown vulnerability report to w.
-// Modules are ordered alphabetically and their OSVs are sorted by ID,
-// producing deterministic output regardless of map iteration order.
+// Write renders a Markdown vulnerability report to w.
+// Modules and their OSVs are sorted alphabetically.
 func Write(w io.Writer, fixes map[string]govulncheck.Fix) {
 	modules := make([]string, 0, len(fixes))
 	for mod := range fixes {
@@ -33,7 +32,6 @@ func Write(w io.Writer, fixes map[string]govulncheck.Fix) {
 		})
 
 		for _, o := range osvs {
-			// Heading: OSV ID with optional aliases.
 			if len(o.Aliases) > 0 {
 				fmt.Fprintf(&b, "### %s (%s)\n\n", o.ID, strings.Join(o.Aliases, ", "))
 			} else {

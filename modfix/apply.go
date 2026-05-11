@@ -10,10 +10,8 @@ import (
 	"strings"
 )
 
-// Apply upgrades each module in fixes to its fixed version by running
-// "go get", then cleans up the module graph with "go mod tidy".
-// fixes is a map of module path to the minimum fixed version.
-// All commands run inside dir. ctx controls cancellation.
+// Apply upgrades the modules in fixes to their fixed versions in dir.
+// fixes maps module path to the minimum fixed version.
 func Apply(ctx context.Context, dir string, fixes map[string]string) error {
 	for mod, ver := range fixes {
 		arg := moduleArg(mod, ver)
@@ -37,7 +35,6 @@ func moduleArg(mod, ver string) string {
 		// ver is "go1.23.0"; "go get toolchain@go1.23.0" updates the toolchain directive.
 		return "toolchain@" + ver
 	default:
-		// ver is "v1.2.3".
 		return mod + "@" + ver
 	}
 }
