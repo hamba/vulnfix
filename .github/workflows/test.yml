@@ -28,6 +28,13 @@ jobs:
         with:
           go-version-file: 'go.mod'
 
+      - name: Cache Go test cache
+        uses: actions/cache@v4
+        with:
+          path: /tmp/go-test-cache
+          key: ${{ runner.os }}-gocache-${{ hashFiles('**/go.sum') }}
+          restore-keys: ${{ runner.os }}-gocache-
+
       - name: Download dependencies
         run: go mod download
         if: steps.install-go.outputs.cache-hit != 'true'
@@ -38,6 +45,8 @@ jobs:
           gotestsum_version: v1.13.0
 
       - name: Run Tests
+        env:
+          GOCACHE: /tmp/go-test-cache
         run: gotestsum --junitfile tests.xml --format pkgname -- -cover -race ./...
 
       - name: Test Summary
