@@ -32,15 +32,18 @@ func realMain() int {
 		return 1
 	}
 
-	if len(fixes) == 0 {
-		if *outFile != "" && *outFile != "-" {
-			f, err := os.Create(*outFile)
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "vulnfix: %v\n", err)
-				return 1
-			}
-			defer func() { _ = f.Close() }()
+	var f *os.File
+	if *outFile != "" && *outFile != "-" {
+		f, err = os.Create(*outFile)
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "vulnfix: %v\n", err)
+			return 1
+		}
+		defer func() { _ = f.Close() }()
+	}
 
+	if len(fixes) == 0 {
+		if f != nil {
 			_, _ = f.WriteString("# Vulnerability Report\n\nNo vulnerabilities found.\n")
 		}
 
@@ -57,14 +60,7 @@ func realMain() int {
 		return 1
 	}
 
-	if *outFile != "" && *outFile != "-" {
-		f, err := os.Create(*outFile)
-		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "vulnfix: %v\n", err)
-			return 1
-		}
-		defer func() { _ = f.Close() }()
-
+	if f != nil {
 		report.Write(f, fixes)
 	}
 	return 0
