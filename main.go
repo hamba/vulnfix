@@ -28,12 +28,26 @@ func realMain() int {
 
 	fixes, err := govulncheck.Parse(os.Stdin)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "vulnfix: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "vulnfix: %v\n", err)
 		return 1
 	}
 
+	var f *os.File
+	if *outFile != "" && *outFile != "-" {
+		f, err = os.Create(*outFile)
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "vulnfix: %v\n", err)
+			return 1
+		}
+		defer func() { _ = f.Close() }()
+	}
+
 	if len(fixes) == 0 {
-		fmt.Fprintln(os.Stderr, "vulnfix: no fixable vulnerabilities found")
+		if f != nil {
+			_, _ = f.WriteString("# Vulnerability Report\n\nNo vulnerabilities found.\n")
+		}
+
+		_, _ = fmt.Fprintln(os.Stdout, "vulnfix: no fixable vulnerabilities found")
 		return 0
 	}
 
@@ -42,18 +56,11 @@ func realMain() int {
 		versions[mod] = fix.Version
 	}
 	if err = modfix.Apply(ctx, *dir, versions); err != nil {
-		fmt.Fprintf(os.Stderr, "vulnfix: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "vulnfix: %v\n", err)
 		return 1
 	}
 
-	if *outFile != "" && *outFile != "-" {
-		f, err := os.Create(*outFile)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "vulnfix: %v\n", err)
-			return 1
-		}
-		defer func() { _ = f.Close() }()
-
+	if f != nil {
 		report.Write(f, fixes)
 	}
 	return 0
