@@ -33,7 +33,19 @@ func realMain() int {
 	}
 
 	if len(fixes) == 0 {
-		fmt.Fprintln(os.Stderr, "vulnfix: no fixable vulnerabilities found")
+		if *outFile != "" && *outFile != "-" {
+			f, err := os.Create(*outFile)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "vulnfix: %v\n", err)
+				return 1
+			}
+			defer func() { _ = f.Close() }()
+
+			f.Write([]byte("# Vulnerability Report\n\n"))
+			f.Write([]byte("No vulnerabilities found.\n"))
+		}
+
+		fmt.Fprintln(os.Stdout, "vulnfix: no fixable vulnerabilities found")
 		return 0
 	}
 
